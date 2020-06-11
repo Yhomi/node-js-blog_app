@@ -1,0 +1,14 @@
+extends layout
+block content
+    h1  #{title}
+    form(method='post',action='/articles/update/'+article._id)
+      .form-group
+        label Title
+        input.form-control(type='text',name='title',value=article.title)
+      .form-group
+        label Author
+        input.form-control(type='text',name='author',value=article.author)
+      .form-group
+        label Body
+        textarea.form-control(type='text',name='body',rows='5')=article.body
+      input.btn.btn-primary.btn-block(type='submit',value='Update Article')
