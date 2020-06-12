@@ -18,11 +18,14 @@ html
           li.nav-item
             a.nav-link(href='#') KnowledgeBase
           li.nav-item
-            a.nav-link(href='/add/articles', tabindex='-1', aria-disabled='true') Add Articles
+            a.nav-link(href='/articles/add', tabindex='-1', aria-disabled='true') Add Articles
           
 
     .container.mt-4
       !=messages('message',locals)
+      if errors
+        each error, i in errors
+          div(class="alert alert-danger") #{error.msg}
       block content
       br
       br

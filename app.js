@@ -3,7 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Article= require('./models/article');
 const bodyParser =require('body-parser');
-const expressValidator= require('express-validator');
+// const expressValidator= require('express-validator');
 const flash =require('connect-flash');
 const session =require('express-session');
 
@@ -19,7 +19,7 @@ db.once('open',()=>{
 
 // check for errors
 db.on('error',(err)=>{
-  console.log('err');
+  console.log(err);
 })
 
 // init express
@@ -53,23 +53,8 @@ app.use((req,res,next)=>{
   next();
 })
 
-// Express middleware validator
-app.use(expressValidator({
-  errorFormatter:function(param,msg,value){
-    var namespace= param.split('.'),
-    root = namespace.shift() ,
-    formParam=root;
-    while (namespace.length) {
-      formParam +='['+ namespace.shift()+']';
-    }
-    return{
-      param:formParam,
-      msg:msg,
-      value:value
-    };
-  }
-
-}));
+// routes middleware
+app.use('/articles',require('./routes/article'));
 
 // home route
 // app.get('/',(req,res)=>{
@@ -85,58 +70,6 @@ app.get('/',(req,res)=>{
 
 });
 
-app.get('/add/articles',(req,res)=>{
-  res.render('add_articles',{title:'Add Articles'})
-});
-
-app.post('/articles/add',(req,res)=>{
-  let article = new Article();
-  article.title=req.body.title;
-  article.author=req.body.author;
-  article.body=req.body.body;
-  article.save((err)=>{
-    if (err) throw err;
-    res.redirect('/');
-  });
-});
-
-// get single articles
-app.get('/articles/:id',(req,res)=>{
-  Article.findById(req.params.id,(err,article)=>{
-    if (err) throw err;
-    // console.log(article);
-    res.render('show',{article:article});
-  });
-});
-
-// edit article
-app.get('/articles/edit/:id',(req,res)=>{
-  Article.findById(req.params.id,(err,article)=>{
-    res.render('edit',{article:article,title:'Edit Article'});
-  });
-});
-
-// update articles
-app.post('/articles/update/:id',(req,res)=>{
-  let article ={};
-  article.title=req.body.title;
-  article.author=req.body.author;
-  article.body=req.body.body
-  let query={_id:req.params.id};
-  Article.update(query,article,(err)=>{
-    if (err) throw err;
-    res.redirect('/');
-  });
-});
-
-// delete an articles
-app.delete('/article/delete/:id',(req,res)=>{
-  let query ={_id:req.params.id};
-  Article.remove(query,(err)=>{
-    if (err) throw err;
-    res.send('Success');
-  });
-});
 
 const PORT=process.env.PORT || 3000
 
