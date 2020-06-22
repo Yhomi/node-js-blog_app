@@ -3,13 +3,14 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Article= require('./models/article');
 const bodyParser =require('body-parser');
-// const expressValidator= require('express-validator');
+const config = require('./config/database');
 const flash =require('connect-flash');
 const session =require('express-session');
+const passport = require('passport');
 
 
 // connect to database
-mongoose.connect('mongodb://localhost:27017/nodekb');
+mongoose.connect(config.database);
 let db=mongoose.connection;
 
 // check connection
@@ -46,6 +47,18 @@ app.use(session({
 
 }));
 
+// Passport config
+require('./config/passport')(passport);
+
+// passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*',(req,res,next)=>{
+  res.locals.user= req.user || null;
+  next();
+})
+
 // Express Messages middleware
 app.use(require('connect-flash')());
 app.use((req,res,next)=>{
@@ -55,6 +68,7 @@ app.use((req,res,next)=>{
 
 // routes middleware
 app.use('/articles',require('./routes/article'));
+app.use('/users',require('./routes/users'));
 
 // home route
 // app.get('/',(req,res)=>{

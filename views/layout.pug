@@ -17,8 +17,18 @@ html
               span.sr-only (current)
           li.nav-item
             a.nav-link(href='#') KnowledgeBase
-          li.nav-item
-            a.nav-link(href='/articles/add', tabindex='-1', aria-disabled='true') Add Articles
+          if user
+            li.nav-item
+              a.nav-link(href='/articles/add', tabindex='-1', aria-disabled='true') Add Articles
+        ul.navbar-nav.navbar-right
+          if user
+            li
+              a.nav-link(href="/users/logout") Logout
+          else 
+            li
+              a.nav-link(href="/users/register") Register
+            li
+              a.nav-link(href="/users/login") Login
           
 
     .container.mt-4
